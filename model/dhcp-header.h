@@ -307,7 +307,7 @@ public:
 
 };// end of the Header
 
-static inline std::ostream& operator<< (std::ostream& os, const QuestionSectionHeader & header)
+static inline std::ostream& operator<< (std::ostream& os, const DHCPMessage & header)
 {
   header.Print (os);
   return os;
