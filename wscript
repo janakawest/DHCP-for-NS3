@@ -10,6 +10,7 @@ def build(bld):
     module = bld.create_ns3_module('dhcp', ['core'])
     module.source = [
         'model/dhcp.cc',
+				'model/dhcp-header.cc',
         'helper/dhcp-helper.cc',
         ]
 

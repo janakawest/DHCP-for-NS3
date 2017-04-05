@@ -72,13 +72,6 @@ public:
     //TODO: Find and Finish the section
   };
 
-
-
-
-
-
-
-
   DHCPMessage ();
   virtual ~ DHCPMessage ();
   
@@ -130,8 +123,6 @@ private:
 	std::string m_optionGateway; //!< Gateway address from the DHCP server
 	std::string m_optionDNS; //!< DNS server IP address
 	std::string m_optionDNS2; //!< Secondery DNS server if awailable
-
-
 
 	// sname, file, and option feilds are depricated in this implementation.
 public:
@@ -286,7 +277,7 @@ public:
   {
     return m_optionDNS;
   }
-  void SetGiaddr (std::string dns)
+  void SetOptionDNS (std::string dns)
   {
     m_optionDNS = dns;    
   }     
@@ -302,9 +293,6 @@ public:
   {
     m_optionDNS2 = dns2;    
   }     
-
-
-
 };// end of the Header
 
 static inline std::ostream& operator<< (std::ostream& os, const DHCPMessage & header)
@@ -313,3 +301,4 @@ static inline std::ostream& operator<< (std::ostream& os, const DHCPMessage & he
   return os;
 }
 }// ns-3 namespace
+#endif
