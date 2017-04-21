@@ -10,14 +10,14 @@ def build(bld):
     module = bld.create_ns3_module('dhcp', ['core'])
     module.source = [
         'model/dhcp.cc',
-				'model/dhcp-header.cc',
+	'model/dhcp-header.cc',
         'helper/dhcp-helper.cc',
         ]
 
-    module_test = bld.create_ns3_module_test_library('dhcp')
-    module_test.source = [
-        'test/dhcp-test-suite.cc',
-        ]
+#    module_test = bld.create_ns3_module_test_library('dhcp')
+#    module_test.source = [
+#        'test/dhcp-test-suite.cc',
+#        ]
 
     headers = bld(features='ns3header')
     headers.module = 'dhcp'
