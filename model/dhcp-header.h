@@ -31,10 +31,23 @@ namespace ns3 {
 class DHCPMessage : public Header
 {
 public:
+	/**
+		Following enum was created based on the instructions given 
+		in both RFC2131 and RFC951*/
 	enum OperationCode
   {
-    BOOTREQUEST=1,
-    BOOTREPLY=2   
+		/*For BootP messages*/
+    BOOTREQUEST=0x01,
+    BOOTREPLY=0x02,
+		/*for DHCP messages*/
+		DHCPDISCOVER=0x03,
+		DHCPOFFER=0x04,
+		DHCPREQUEST=0x05,
+		DHCPACK=0x06,
+		DHCPNAK=0x07,
+		DHCPDECLINE=0x08,
+		DHCPRELEASE=0x09,
+		DHCPINFORM=0x10
   };
 
   // Reference https://tools.ietf.org/html/rfc1700

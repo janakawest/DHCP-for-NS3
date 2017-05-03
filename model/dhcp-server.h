@@ -22,9 +22,19 @@
 #ifndef DHCP_SERVER_H
 #define DHCP_SERVER_H
 
+#include "ns3/application.h"
+#include "ns3/event-id.h"
+#include "ns3/ptr.h"
+#include "ns3/address.h"
+#include "ns3/random-variable-stream.h"
+
+#include "ns3/dhcp.h"
+#include "ns3/dhcp-header.h"
+
 namespace ns3 {
 class DHCPServer
 {
+	// The DHCP server class
 };
 } // end of ns-3 namespace
 #endif
