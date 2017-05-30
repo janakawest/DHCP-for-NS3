@@ -34,8 +34,7 @@ class DHCPBindingEntry
 		DHCPBindingEntry ( std::string mac = std::string (""),
  								std::string ip = std::string (""),
 								uint32_t issuedTime = 0, 
-								uint32_t leasedTime = 0, 
-								);
+								uint32_t leasedTime = 0);
 
 		~DHCPBindingEntry ();
 
@@ -87,10 +86,10 @@ class DHCPBindingEntry
 			return m_IP;
 		}
 	private:
-		string m_MAC; //!< The MAC address
-		string m_IP; //!< The leased IP address
+		std::string m_MAC; //!< The MAC address
+		std::string m_IP; //!< The leased IP address
 		uint32_t m_issuedTime; //!< The issued time 
-		uint32_t m_releaseTime; //!< The leased time
+		uint32_t m_leasedTime; //!< The leased time
 };
 std::ostream operator<< (std::ostream& os, DHCPBindingEntry const& entry);
 
@@ -99,9 +98,9 @@ class DHCPBindTable
 	/**
 		Class that is working as the DINDING structure explained in the RFC.
 		*/
-	public:
-		DHCPBindingTable ();
-		~DHCPBindingTable ();
+public:
+		DHCPBindTable ();
+		~DHCPBindTable ();
 
   /// Container for a DHCP Bind entries
 	typedef std::pair <DHCPBindingEntry*, EventId> BindRecordPair;
@@ -114,6 +113,42 @@ class DHCPBindTable
 
 	/// Constant Iterator for Binding Record
   typedef std::list<std::pair <DHCPBindingEntry*, EventId> >::const_iterator BindRecordRecordCI;
+
+  // Static DHCP addresses. 
+	/// Container for a static DHCP Bind entries
+	typedef std::pair <DHCPBindingEntry*, EventId> StaticBindRecordPair;
+
+	/// Container for an instance of a Bind Entry table
+	typedef std::list<std::pair <DHCPBindingEntry*, EventId> > StaticBindRecordInstance;
+
+	/// Iterator for a Binding Record
+  typedef std::list<std::pair <DHCPBindingEntry*, EventId> >::iterator StaticBindRecordI;
+
+	/// Constant Iterator for Binding Record
+  typedef std::list<std::pair <DHCPBindingEntry*, EventId> >::const_iterator StaticBindRecordRecordCI;
+
+	bool AddRecord (std::string MACAddress, std::string IPAddress, uint32_t issuedTime, uint32_t leasedTime);
+	bool DeleteRecord (DHCPBindingEntry* record);
+
+	DHCPBindTable::BindRecordI FindRecordforMAC (std::string MACAddress, bool &found);
+	DHCPBindTable::BindRecordI FindRecordforIP (std::string IPAddress, bool &found);
+
+protected:
+	/**
+		/brief Load the preconfigured parameters from the file dhcpconf file.
+		*/
+	void LoadParameters (void);
+
+private:
+	std::string m_networkAddress; //!< the network address DHCP support
+	std::string m_networkMask; //!< netmask
+	std::string m_rangeUpperBound; //!< the Upper buond of the lease range
+	std::string m_rangeLowerBound; //!< the lower bound of the lease range
+	std::string m_dnsAddress; //!< Option DNS address
+	std::string m_gatewayAddress; //!< Option Gateway Address
+	uint32_t m_maxLeaseTime; //!< Maximum Leasing time
+	uint32_t m_defaultLeaseTime; //!< deafault lease time
+	
 
 };
 
