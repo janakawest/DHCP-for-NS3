@@ -31,10 +31,64 @@
 #include "ns3/dhcp.h"
 #include "ns3/dhcp-header.h"
 
+#define DHCP_COMM_PORT 67 // UDP Port number 67 was used as RFC pointedout
+
 namespace ns3 {
-class DHCPServer
+
+class Socket;
+class Packet;
+
+class DHCPServer : public Application
 {
-	// The DHCP server class
+public:
+	DHCPServer (void);
+	~DHCPServer (void);
+		static TypeId GetTypeId (void);
+  /**
+    /brief Load the preconfigured parameters from the file dhcpconf file.
+    */
+  void LoadParameters (void);
+
+  /**
+    /brief Set the network parameters according to the configuration file. 
+    This function accesses the network address, MASK, and range
+    and assign those values to IPV4 address class. */
+  void SetNetworkParameters (void);
+
+  /**
+    /brief This mehtod returns the next available address in the range of
+    IP ddresses. 
+    /returns the IP address (a string value). */
+  std::string GetNextAddress (void);
+
+	void DoInitialize (void);
+	void DoDispose (void);
+
+private:
+	
+	void HandleDHCPRequest (Ptr<Socket> socket);
+	virtual void StartApplication (void);
+	virtual void StopApplication (void);
+
+	/// Note: String Variables are used for IP address for the conveniency
+  std::string m_networkAddress; //!< the network address DHCP support
+  std::string m_networkMask; //!< netmask
+  std::string m_rangeUpperBound; //!< the Upper buond of the lease range
+  std::string m_rangeLowerBound; //!< the lower bound of the lease range
+  std::string m_dnsAddress; //!< Option DNS address
+  std::string m_gatewayAddress; //!< Option Gateway Address
+  uint32_t m_maxLeaseTime; //!< Maximum Leasing time
+  uint32_t m_defaultLeaseTime; //!< deafault lease time
+  std::string m_currentLeasedAddress; //!< currently offered address	
+	Ipv4AddressHelper m_ipv4; //!< IPv4 address helper for dynamic allocation
+
+	Ipv4Address m_DHCPServerAddress; //!< The Server Address
+	Ipv4Mask m_DHCPServerNetMask; //!< The Server netmask
+
+	bool m_initialized; //!< indicate that the module is initialied
+
+	Ptr<Socket> m_socket; //!< The UDP socket used for BootPMessages
+
 };
 } // end of ns-3 namespace
 #endif

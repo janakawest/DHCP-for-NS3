@@ -13,6 +13,8 @@
 #include "ns3/ipv4.h"
 #include "ns3/net-device.h"
 #include "ns3/output-stream-wrapper.h"
+#include "ns3/ipv4-address-helper.h"
+
 namespace ns3 {
 class DHCPBindingEntry
 {
@@ -99,57 +101,48 @@ class DHCPBindTable
 		Class that is working as the DINDING structure explained in the RFC.
 		*/
 public:
-		DHCPBindTable ();
-		~DHCPBindTable ();
+	DHCPBindTable ();
+	~DHCPBindTable ();
 
+	void DoInitialize (void);
+	void DoDispose (void);
   /// Container for a DHCP Bind entries
-	typedef std::pair <DHCPBindingEntry*, EventId> BindRecordPair;
+	typedef std::pair <DHCPBindingEntry*, EventId> DHCPRecordPair;
 
 	/// Container for an instance of a Bind Entry table
-	typedef std::list<std::pair <DHCPBindingEntry*, EventId> > BindRecordInstance;
+	typedef std::list<std::pair <DHCPBindingEntry*, EventId> > DHCPRecordInstance;
 
 	/// Iterator for a Binding Record
-  typedef std::list<std::pair <DHCPBindingEntry*, EventId> >::iterator BindRecordI;
+  typedef std::list<std::pair <DHCPBindingEntry*, EventId> >::iterator DHCPRecordI;
 
 	/// Constant Iterator for Binding Record
-  typedef std::list<std::pair <DHCPBindingEntry*, EventId> >::const_iterator BindRecordRecordCI;
+  typedef std::list<std::pair <DHCPBindingEntry*, EventId> >::const_iterator DHCPRecordCI;
 
-  // Static DHCP addresses. 
-	/// Container for a static DHCP Bind entries
-	typedef std::pair <DHCPBindingEntry*, EventId> StaticBindRecordPair;
+  /**
+	// TODO enable this section for support Static DHCP configuration
+	{
+		/// Container for a static DHCP Bind entries
+		typedef std::pair <DHCPBindingEntry*, EventId> StaticBindRecordPair;
 
-	/// Container for an instance of a Bind Entry table
-	typedef std::list<std::pair <DHCPBindingEntry*, EventId> > StaticBindRecordInstance;
+		/// Container for an instance of a Bind Entry table
+		typedef std::list<std::pair <DHCPBindingEntry*, EventId> > StaticBindRecordInstance;
 
-	/// Iterator for a Binding Record
-  typedef std::list<std::pair <DHCPBindingEntry*, EventId> >::iterator StaticBindRecordI;
+		/// Iterator for a Binding Record
+		typedef std::list<std::pair <DHCPBindingEntry*, EventId> >::iterator StaticBindRecordI;
 
-	/// Constant Iterator for Binding Record
-  typedef std::list<std::pair <DHCPBindingEntry*, EventId> >::const_iterator StaticBindRecordRecordCI;
-
-	bool AddRecord (std::string MACAddress, std::string IPAddress, uint32_t issuedTime, uint32_t leasedTime);
+		/// Constant Iterator for Binding Record
+		typedef std::list<std::pair <DHCPBindingEntry*, EventId> >::const_iterator StaticBindRecordRecordCI;
+	}
+	**/
+	void AddRecord (std::string MACAddress, std::string IPAddress, uint32_t issuedTime, uint32_t leasedTime);
 	bool DeleteRecord (DHCPBindingEntry* record);
 
-	DHCPBindTable::BindRecordI FindRecordforMAC (std::string MACAddress, bool &found);
-	DHCPBindTable::BindRecordI FindRecordforIP (std::string IPAddress, bool &found);
-
-protected:
-	/**
-		/brief Load the preconfigured parameters from the file dhcpconf file.
-		*/
-	void LoadParameters (void);
+	DHCPBindTable::DHCPRecordI FindARecordforMAC (std::string MACAddress, bool &found);
+	DHCPBindTable::DHCPRecordI FindARecordforIP (std::string IPAddress, bool &found);
 
 private:
-	std::string m_networkAddress; //!< the network address DHCP support
-	std::string m_networkMask; //!< netmask
-	std::string m_rangeUpperBound; //!< the Upper buond of the lease range
-	std::string m_rangeLowerBound; //!< the lower bound of the lease range
-	std::string m_dnsAddress; //!< Option DNS address
-	std::string m_gatewayAddress; //!< Option Gateway Address
-	uint32_t m_maxLeaseTime; //!< Maximum Leasing time
-	uint32_t m_defaultLeaseTime; //!< deafault lease time
-	
-
+	DHCPRecordInstance m_dhcpTable; //!< DHCP Table
+	Ptr<UniformRandomVariable> m_rng; //!< Rng stream.
 };
 
 class DynamicConfigurationEntry

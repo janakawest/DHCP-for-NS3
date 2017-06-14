@@ -2,17 +2,10 @@
 
 #include "dhcp.h"
 
-#include <iomanip>
-#include <iostream>
-#include <fstream>
-
 #include "ns3/simulator.h" 
 #include "ns3/log.h"
 #include "ns3/abort.h"
-#include "ns3/node-list.h"
-#include "ns3/node.h"
 #include "ns3/timer.h"
-
 
 NS_LOG_COMPONENT_DEFINE ("DHCPBindRecord"); 
 
@@ -31,55 +24,98 @@ namespace ns3 {
 	{ /*dstrctr*/}
 
 	DHCPBindTable::DHCPBindTable ()
-	{ /*cstrctr*/}
-	DHCPBindTable::~DHCPBindTable ()
-	{ /*dstrctr*/}
-
-  //NOTE: At the moment this implementation supports only one DHCP network Range
-	void
-	DHCPBindTable::LoadParameters (void)
 	{
-		std::string line = "";
-		std::fstream myfile ("dhcpconf");
-		if (myfile.is_open())
+		DoInitialize (); 
+	}
+	DHCPBindTable::~DHCPBindTable ()
+	{
+		DoDispose (); 
+	}
+
+	void 
+	DHCPBindTable::DoInitialize (void)
+	{
+	}
+
+	void
+	DHCPBindTable::DoDispose (void)
+	{
+		//TODO write necessary instructions
+	}
+
+	void
+	DHCPBindTable::AddRecord (std::string MACAddress, std::string IPAddress, uint32_t issuedTime, uint32_t leasedTime)
+	{
+		DHCPBindingEntry* newEntry  = new DHCPBindingEntry (MACAddress, 
+																												IPAddress, 
+																												issuedTime, 
+																												leasedTime);
+
+		Time delay;
+		EventId removeEvent;
+
+	  delay = Seconds (leasedTime) + Seconds (m_rng->GetValue (0.0, 2.0));
+	  removeEvent = Simulator::Schedule (delay, &DHCPBindTable::DeleteRecord, this, newEntry);
+
+		m_dhcpTable.push_front (std::make_pair (newEntry, removeEvent));
+	}
+
+	bool 
+	DHCPBindTable::DeleteRecord (DHCPBindingEntry* record)
+	{
+		NS_LOG_FUNCTION (this << record);
+
+		bool retValue = false;
+
+		for (DHCPRecordI it = m_dhcpTable.begin (); it != m_dhcpTable.end (); it++)
 		{
-			std::string tmp;
-			while (getline (myfile, line))
+			if (it->first->GetMAC () == record->GetMAC () &&
+					it->first->GetIP () == record->GetIP ())
 			{
-				std::istringstream iss(line);
-				std::string param;
-				iss >> param;
-				if (param == "subnet")
-				{
-					iss >> m_networkAddress;
-					iss >> tmp;
-					iss >> m_networkMask;
-				}
-				else if (param == "range")
-				{
-					iss >> m_rangeLowerBound;
-					iss >> m_rangeUpperBound;
-				}
-				else if (param == "dns")
-				{ 
-					iss >> m_dnsAddress;
-				}
-				else if (param == "gateway")
-				{
-					iss >> m_gatewayAddress;
-				}
-				else if (param == "max-lease-time")
-				{
-					iss >> m_maxLeaseTime;
-				}
-				else if (param == "default-lease-time")
-				{
-					iss >> m_defaultLeaseTime;
-				}
+				m_dhcpTable.erase (it);
+				retValue = true;
+				break;
 			}
-			std::cout << m_rangeLowerBound << std::endl;
-			myfile.close();
 		}
+		return retValue;
+	}
+
+	DHCPBindTable::DHCPRecordI 
+	DHCPBindTable::FindARecordforMAC (std::string MACAddress, bool &found)
+	{
+		NS_LOG_FUNCTION (this << MACAddress);
+		DHCPRecordI foundRecord;
+		bool retValue = false;
+		for (DHCPRecordI it = m_dhcpTable.begin (); it != m_dhcpTable.end (); it ++)
+		{
+			if (it->first->GetMAC () == MACAddress)
+			{
+				foundRecord = it;
+				retValue = true;
+				break;
+			}
+		}
+		found  = retValue;
+		return foundRecord;
+	}
+
+	DHCPBindTable::DHCPRecordI 
+	DHCPBindTable::FindARecordforIP (std::string IPAddress, bool &found)
+	{
+		NS_LOG_FUNCTION (this << IPAddress);
+		DHCPRecordI foundRecord;
+		bool retValue = false;
+		for (DHCPRecordI it = m_dhcpTable.begin (); it != m_dhcpTable.end (); it ++)
+		{
+			if (it->first->GetIP () == IPAddress)
+			{
+				foundRecord = it;
+				retValue = true;
+				break;
+			}
+		}
+		found  = retValue;
+		return foundRecord;
 	}
 }//namespce
 
