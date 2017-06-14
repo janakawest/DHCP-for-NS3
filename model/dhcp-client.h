@@ -44,5 +44,25 @@ public:
 	DHCPClient (void);
 	~DHCPClient (void);
 		static TypeId GetTypeId (void);
-}
+
+	/**
+	/brief Broadcast DHCP discover messages. When the message is sent, the client should wait 
+					untila one or more DHCP server replies for the request. That function is 
+					specifically writtne in the HandleDHCPResponse method.
+	*/
+	bool DhcpDiscover ();
+
+private:
+	virtual void StartApplication (void);
+	virtual void StopApplication (void);
+
+	Ipv4Address m_DHCPClientAddress; //!< Client's IP address
+	Ipv4Mask m_DHCPClientNetmask; //!< Client's Netmask
+	
+	bool DhcpServerDiscovered; //!< true if the client was able to find a DHCP server
+
+	Ptr<Socket> m_DHCPCommSocket; //!< The UDP socket uses for DHCP Messages
+	Ptr<Socket> m_CommSocket; //!< The socket uses for comunicaiton
+};
 }// ns-3 namespace
+#endif

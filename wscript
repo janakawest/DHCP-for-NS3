@@ -11,6 +11,7 @@ def build(bld):
     module.source = [
         'model/dhcp.cc',
 				'model/dhcp-server.cc',
+				'model/dhcp-client.cc',
 				'model/dhcp-header.cc',
         'helper/dhcp-helper.cc',
         ]
@@ -25,6 +26,7 @@ def build(bld):
     headers.source = [
         'model/dhcp-header.h',
 				'model/dhcp-server.h',
+				'model/dhcp-client.h',
         'model/dhcp.h',
         'helper/dhcp-helper.h',
         ]

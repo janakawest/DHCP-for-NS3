@@ -23,7 +23,9 @@ namespace ns3 {
 	void 
 	DHCPServerHelper::GetNextAddress (Ptr<Application> app)
 	{
-		std::cout << app->GetObject<DHCPServer> ()->GetNextAddress () << std::endl;
+		std::cout << 
+							app->GetObject<DHCPServer> ()->GetNextAddress () << 
+							std::endl;
 	}
 	
 	ApplicationContainer
