@@ -182,7 +182,7 @@ public:
   {
     return m_xId;
   }
-  void SetHlen (uint32_t xid)
+  void SetXid (uint32_t xid)
   {
     m_xId = xid;    
   }  
@@ -206,9 +206,9 @@ public:
   {
     return m_flags;
   }
-  void SetHlen (uint16_t flags)
+  void SetFlags (uint16_t flags)
   {
-    m_flags = flags;    
+    m_flags = flags; 
   }     
 
   /*
@@ -218,7 +218,7 @@ public:
   {
     return m_ciaddr;
   }
-  void SetCiaddr (std::string ciaddr)
+	void SetCiaddr (std::string ciaddr)
   {
     m_ciaddr = ciaddr;    
   }     

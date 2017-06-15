@@ -2,68 +2,83 @@
 
 #include "ns3/core-module.h"
 #include "ns3/dhcp-helper.h"
-
-#include "ns3/internet-module.h"
+#include "ns3/core-module.h"
 #include "ns3/network-module.h"
+#include "ns3/csma-module.h"
+#include "ns3/internet-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/applications-module.h"
-#include "ns3/ipv4-static-routing-helper.h"
-#include "ns3/ipv4-routing-table-entry.h"
+#include "ns3/ipv4-global-routing-helper.h"
+#include "ns3/command-line.h"
 
 using namespace ns3;
-NS_LOG_COMPONENT_DEFINE ("DHCPimpleExample");
 
-int 
+NS_LOG_COMPONENT_DEFINE ("DHCPExample");
+
+int
 main (int argc, char *argv[])
 {
-  bool verbose = true;
+	CommandLine cmd;
+	cmd.Parse(argc,argv);
 
-  CommandLine cmd;
+	NodeContainer csmaNodes;
+	csmaNodes.Create (5);
 
-  cmd.AddValue ("verbose", "Tell application to log if true", verbose);
+	CsmaHelper csma;
 
-  cmd.Parse (argc,argv);
+	csma.SetChannelAttribute ("DataRate", StringValue ("100Mbps"));
+	csma.SetChannelAttribute ("Delay", TimeValue (NanoSeconds (6560)));
 
+	NetDeviceContainer csmaDevices;
+	csmaDevices = csma.Install (csmaNodes);
 
-  Ptr<Node> sendai = CreateObject<Node> (); // 1
-  Names::Add ("SendaiRouter", sendai); 
+	InternetStackHelper stack;
+	stack.Install (csmaNodes);
 
-	Ptr<Node> c1 = CreateObject<Node> ();
-  Names::Add ("Client1", c1);
+	Ipv4AddressHelper address;
+	address.SetBase ("10.1.1.0", "255.255.255.0");
 
-  //client<-->Router
-  //NodeContainer net1 (c1, sendai); // Sendai --> i1
+	Ipv4InterfaceContainer csmaInterfaces;
+	csmaInterfaces = address.Assign (csmaDevices);
 
-  //NS_LOG_INFO ("Set 1Gbps Links.");
-  //PointToPointHelper p2p_1Gbps;
-  //p2p_1Gbps.SetDeviceAttribute ("DataRate", StringValue ("1Gbps"));
-  //p2p_1Gbps.SetChannelAttribute ("Delay", StringValue ("2ms")); // Transmission Delay is a guess
-
-	// links between clients and their gateway routers
-	//NetDeviceContainer ndc1 = p2p_1Gbps.Install (net1);// net1 Sendai --> i1
-
-	//NS_LOG_INFO ("Assign IPv4 Addresses.");
-	//Ipv4AddressHelper ipv4;
-
-	// For clients
-	//ipv4.SetBase ("192.168.16.0","255.255.255.252");
-	//	Ipv4InterfaceContainer iic1 = ipv4.Assign (ndc1);	// Sendai,i1 <--> client1,1
+	//UdpEchoServerHelper echoServer (9);
+	//ApplicationContainer serverApps = echoServer.Install (csmaNodes.Get (0));
 
 	DHCPServerHelper dhcpserver;
-	//dhcpserver.SetAttribute ("SetServerAddress", 
-	//											Ipv4AddressValue (c1->GetObject<Ipv4> ()->GetAddress (1, 0).GetLocal ()));
-  ApplicationContainer appsLocal = dhcpserver.Install (c1);	
-	dhcpserver.GetNextAddress (appsLocal.Get (0));
-	dhcpserver.GetNextAddress (appsLocal.Get (0));
-	dhcpserver.GetNextAddress (appsLocal.Get (0));
-	dhcpserver.GetNextAddress (appsLocal.Get (0));
-	dhcpserver.GetNextAddress (appsLocal.Get (0));
-	dhcpserver.GetNextAddress (appsLocal.Get (0));
-	dhcpserver.GetNextAddress (appsLocal.Get (0));
+	dhcpserver.SetAttribute ("SetServerAddress", 
+														Ipv4AddressValue (csmaNodes.Get (0)->GetObject<Ipv4> ()
+														->GetAddress (1, 0).GetLocal ()));
+  ApplicationContainer serverApps = dhcpserver.Install (csmaNodes.Get (0));
 
-  Simulator::Run ();
-  Simulator::Destroy ();
-  return 0;
+	dhcpserver.GetNextAddress (serverApps.Get (0));
+	dhcpserver.GetNextAddress (serverApps.Get (0));
+	dhcpserver.GetNextAddress (serverApps.Get (0));
+	dhcpserver.GetNextAddress (serverApps.Get (0));
+	dhcpserver.GetNextAddress (serverApps.Get (0));
+	dhcpserver.GetNextAddress (serverApps.Get (0));
+	dhcpserver.GetNextAddress (serverApps.Get (0));
+	
+	DHCPClientHelper dhcpClient;
+	dhcpClient.SetAttribute ("InterfaceId", UintegerValue (0));
+	ApplicationContainer clientApps = dhcpClient.Install (csmaNodes.Get (4));
+	
+	//serverApps.Start (Seconds (1.0));
+	//serverApps.Stop (Seconds (50.0));
+
+//	UdpEchoClientHelper echoClient (csmaInterfaces.GetAddress (0), 9);
+//
+//	echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
+//	echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.)));
+//	echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+//
+//	ApplicationContainer clientApps = echoClient.Install (csmaNodes.Get (2));
+//
+//	clientApps.Start (Seconds (2.0));
+//
+//	clientApps.Stop (Seconds (50.0));
+	Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+
+	Simulator::Run ();
+	Simulator::Destroy ();
+	return 0;
 }
-
-

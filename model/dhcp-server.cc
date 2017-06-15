@@ -140,6 +140,7 @@ namespace ns3
   std::string
   DHCPServer::GetNextAddress (void)
   {
+		//std::cout << (int) GetNode ()->GetDevice (0)->GetAddress ().GetLength () << std::endl;
     std::ostringstream oss;
 		uint32_t nextAddress;
 		if (m_currentLeasedAddress == "")
@@ -164,7 +165,7 @@ namespace ns3
 		{
       TypeId tid = TypeId::LookupByName ("ns3::UdpSocketFactory");
 			m_socket = Socket::CreateSocket (GetNode (), tid);
-			InetSocketAddress local = InetSocketAddress (m_DHCPServerAddress, DHCP_COMM_PORT);
+			InetSocketAddress local = InetSocketAddress (m_DHCPServerAddress, DHCP_SERVER_COMM_PORT);
 			m_socket->Bind (local);
 		}
 		m_socket->SetRecvCallback (MakeCallback (&DHCPServer::HandleDHCPRequest, this));

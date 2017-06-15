@@ -31,7 +31,7 @@
 #include "ns3/dhcp.h"
 #include "ns3/dhcp-header.h"
 
-#define DHCP_COMM_PORT 67 // UDP Port number 67 was used as RFC pointedout
+#define DHCP_SERVER_COMM_PORT 67 // UDP Port number 67 was used as RFC pointedout
 
 namespace ns3 {
 

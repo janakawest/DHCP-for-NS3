@@ -31,7 +31,7 @@
 #include "ns3/dhcp.h"
 #include "ns3/dhcp-header.h"
 
-#define DHCP_COMM_PORT 68 // UDP Port number 68 was used as RFC pointedout
+#define DHCP_CLIENT_COMM_PORT 68 // UDP Port number 68 was used as RFC pointedout
 
 namespace ns3 {
 
@@ -46,23 +46,36 @@ public:
 		static TypeId GetTypeId (void);
 
 	/**
-	/brief Broadcast DHCP discover messages. When the message is sent, the client should wait 
+		/brief Broadcast DHCP discover messages. When the message is sent, the client should wait 
 					untila one or more DHCP server replies for the request. That function is 
 					specifically writtne in the HandleDHCPResponse method.
 	*/
-	bool DhcpDiscover ();
+	void DhcpDiscover ();
 
 private:
+	/**
+		/brief Handle all DHCP response messages comming to the applicaiton 
+	*/
+	void HandleDHCPResponse (Ptr<Socket> socket);
+	/**
+		/brief Get the Transaction Identifier. This is a randomely Genarated unique ID
+	*/
+	uint32_t GetTransactionId (void);
+
 	virtual void StartApplication (void);
 	virtual void StopApplication (void);
 
 	Ipv4Address m_DHCPClientAddress; //!< Client's IP address
 	Ipv4Mask m_DHCPClientNetmask; //!< Client's Netmask
 	
-	bool DhcpServerDiscovered; //!< true if the client was able to find a DHCP server
+	bool m_DhcpServerDiscovered; //!< true if the client was able to find a DHCP server
 
 	Ptr<Socket> m_DHCPCommSocket; //!< The UDP socket uses for DHCP Messages
-	Ptr<Socket> m_CommSocket; //!< The socket uses for comunicaiton
+	Ptr<Socket> m_CommSocket; //!< The socket uses for comunicaitoni
+	
+	uint16_t m_interfaceId; //!< The NetDevice ID that the application is attached to 
+  Ptr<Ipv4> m_ipv4; //!< IPv4 reference
+	Ptr<UniformRandomVariable> m_rng; //!< Rng stream.
 };
 }// ns-3 namespace
 #endif
