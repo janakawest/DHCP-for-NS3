@@ -61,7 +61,7 @@ namespace ns3 {
   uint32_t 
   DHCPMessage::GetSerializedSize (void) const
   {
-    return (2 /*2B to send the size of the query*/ + 
+    return ( 
             sizeof (m_opcode) /*size of of the opcode*/ +
             sizeof (m_hType) /*size of of the Hardware Type*/ +
             sizeof (m_hLen) /*size of of ardware adress length*/ +
@@ -72,10 +72,10 @@ namespace ns3 {
 						m_yiaddr.size () + 1 /*size of the your IP address and the termination*/ +
 						m_siaddr.size () + 1 /*size of the next server IP address and the termination*/ +
 						m_giaddr.size () + 1 /*size of the relay agent IP address and the termination*/ +
-						m_chaddr.size () + 1 /*size of MAC address and the termination*/ +
-						m_optionGateway.size () + 1 /*size of the Gateway IP and the termination*/ +
-						m_optionDNS.size () + 1 /*size of the DNS server IP and the termination*/ +
-						m_optionDNS2.size () + 1 /*size of the DNS server2 IP and the termination */
+						m_chaddr.size () + 1 /*size of MAC address and the termination*/ //+
+						//m_optionGateway.size () + 1 /*size of the Gateway IP and the termination*/ +
+						//m_optionDNS.size () + 1 /*size of the DNS server IP and the termination*/ +
+						//m_optionDNS2.size () + 1 /*size of the DNS server2 IP and the termination */
 				   ); 
   }
   void 
@@ -83,9 +83,9 @@ namespace ns3 {
   {
     Buffer::Iterator i = start;
 
-		i.WriteU16 (m_opcode);
-		i.WriteU16 (m_hType);
-		i.WriteU16 (m_hLen);
+		i.WriteU8 (m_opcode);
+		i.WriteU8 (m_hType);
+		i.WriteU8 (m_hLen);
 		i.WriteHtonU32 (m_xId);
 		i.WriteHtonU16 (m_eCs);
 		i.WriteHtonU16 (m_flags);
@@ -106,15 +106,15 @@ namespace ns3 {
 		// MAC address
 	  i.WriteU16 (m_chaddr.size () + 1);
 		i.Write ((uint8_t*) m_chaddr.c_str (), m_chaddr.size () + 1);
-		// Gateway IP address
-	  i.WriteU16 (m_optionGateway.size () + 1);
-		i.Write ((uint8_t*) m_optionGateway.c_str (), m_optionGateway.size () + 1);
-		// DNS server's IP address
-	  i.WriteU16 (m_optionDNS.size () + 1);
-		i.Write ((uint8_t*) m_optionDNS.c_str (), m_optionDNS.size () + 1);
-		// DNS server 2 IP address
-	  i.WriteU16 (m_optionDNS2.size () + 1);
-		i.Write ((uint8_t*) m_optionDNS2.c_str (), m_optionDNS2.size () + 1);
+		//// Gateway IP address
+	  //i.WriteU16 (m_optionGateway.size () + 1);
+		//i.Write ((uint8_t*) m_optionGateway.c_str (), m_optionGateway.size () + 1);
+		//// DNS server's IP address
+	  //i.WriteU16 (m_optionDNS.size () + 1);
+		//i.Write ((uint8_t*) m_optionDNS.c_str (), m_optionDNS.size () + 1);
+		//// DNS server 2 IP address
+	  //i.WriteU16 (m_optionDNS2.size () + 1);
+		//i.Write ((uint8_t*) m_optionDNS2.c_str (), m_optionDNS2.size () + 1);
   }
   uint32_t 
   DHCPMessage::Deserialize (Buffer::Iterator start)
@@ -130,9 +130,9 @@ namespace ns3 {
 		m_optionDNS = ""; //!< DNS server IP address
 		m_optionDNS2 = ""; //!< Secondery DNS server if awailable
 		
-		m_opcode =  i.ReadU16 (); //!< Operational Code
-		m_hType =  i.ReadU16 ();	//!< Hardware Address Type
-		m_hLen =  i.ReadU16 ();		//!< Hardware Address Length
+		m_opcode =  i.ReadU8 (); //!< Operational Code
+		m_hType =  i.ReadU8 ();	//!< Hardware Address Type
+		m_hLen =  i.ReadU8 ();		//!< Hardware Address Length
 		m_xId =  i.ReadNtohU32 ();		//!< Transaction ID (A Random Number)
 		m_eCs =  i.ReadNtohU16 ();		//!< Time ellapsed since the request //TODO: think a method
 		m_flags =  i.ReadNtohU16 (); 	//!< Flags
@@ -172,26 +172,26 @@ namespace ns3 {
 		i.Read ((uint8_t*) data, receivedSize);
 		m_chaddr = data;
 		
-		// Used for reading variable size strings
-		receivedSize = 0;
-		receivedSize = i.ReadU16 ();
-		data[receivedSize]={0};
-		i.Read ((uint8_t*) data, receivedSize);
-		m_optionGateway = data;
+		//// Used for reading variable size strings
+		//receivedSize = 0;
+		//receivedSize = i.ReadU16 ();
+		//data[receivedSize]={0};
+		//i.Read ((uint8_t*) data, receivedSize);
+		//m_optionGateway = data;
 		
-		// Used for reading variable size strings
-		receivedSize = 0;
-		receivedSize = i.ReadU16 ();
-		data[receivedSize]={0};
-		i.Read ((uint8_t*) data, receivedSize);
-		m_optionDNS = data;
+		//// Used for reading variable size strings
+		//receivedSize = 0;
+		//receivedSize = i.ReadU16 ();
+		//data[receivedSize]={0};
+		//i.Read ((uint8_t*) data, receivedSize);
+		//m_optionDNS = data;
 		
-		// Used for reading variable size strings
-		receivedSize = 0;
-		receivedSize = i.ReadU16 ();
-		data[receivedSize]={0};
-		i.Read ((uint8_t*) data, receivedSize);
-		m_optionDNS2 = data;
+		//// Used for reading variable size strings
+		//receivedSize = 0;
+		//receivedSize = i.ReadU16 ();
+		//data[receivedSize]={0};
+		//i.Read ((uint8_t*) data, receivedSize);
+		//m_optionDNS2 = data;
 		
 		return DHCPMessage::GetSerializedSize ();
   }	

@@ -160,7 +160,7 @@ namespace ns3
 	DHCPServer::StartApplication (void)
 	{
 		NS_LOG_FUNCTION (this);
-				
+		std::cout << "Testing from Server" << std::endl;	
 		if (m_socket == 0)
 		{
       TypeId tid = TypeId::LookupByName ("ns3::UdpSocketFactory");
@@ -169,6 +169,7 @@ namespace ns3
 			m_socket->Bind (local);
 		}
 		m_socket->SetRecvCallback (MakeCallback (&DHCPServer::HandleDHCPRequest, this));
+		m_socket->SetAllowBroadcast (true);
 	}
 
 	void 
@@ -187,6 +188,7 @@ namespace ns3
 	void 
 	DHCPServer::HandleDHCPRequest (Ptr<Socket> socket)
 	{
+		std::cout << "something" << std::endl;
 		//TODO
 	}
 }

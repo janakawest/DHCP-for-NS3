@@ -41,6 +41,7 @@ main (int argc, char *argv[])
 	Ipv4InterfaceContainer csmaInterfaces;
 	csmaInterfaces = address.Assign (csmaDevices);
 
+	Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 	//UdpEchoServerHelper echoServer (9);
 	//ApplicationContainer serverApps = echoServer.Install (csmaNodes.Get (0));
 
@@ -50,20 +51,21 @@ main (int argc, char *argv[])
 														->GetAddress (1, 0).GetLocal ()));
   ApplicationContainer serverApps = dhcpserver.Install (csmaNodes.Get (0));
 
-	dhcpserver.GetNextAddress (serverApps.Get (0));
-	dhcpserver.GetNextAddress (serverApps.Get (0));
-	dhcpserver.GetNextAddress (serverApps.Get (0));
-	dhcpserver.GetNextAddress (serverApps.Get (0));
-	dhcpserver.GetNextAddress (serverApps.Get (0));
-	dhcpserver.GetNextAddress (serverApps.Get (0));
-	dhcpserver.GetNextAddress (serverApps.Get (0));
+	serverApps.Start (Seconds (1.0));
+	serverApps.Stop (Seconds (50.0));
+
+	//dhcpserver.GetNextAddress (serverApps.Get (0));
+	//dhcpserver.GetNextAddress (serverApps.Get (0));
+	//dhcpserver.GetNextAddress (serverApps.Get (0));
+	//dhcpserver.GetNextAddress (serverApps.Get (0));
+	//dhcpserver.GetNextAddress (serverApps.Get (0));
+	//dhcpserver.GetNextAddress (serverApps.Get (0));
+	//dhcpserver.GetNextAddress (serverApps.Get (0));
 	
 	DHCPClientHelper dhcpClient;
 	dhcpClient.SetAttribute ("InterfaceId", UintegerValue (0));
 	ApplicationContainer clientApps = dhcpClient.Install (csmaNodes.Get (4));
 	
-	//serverApps.Start (Seconds (1.0));
-	//serverApps.Stop (Seconds (50.0));
 
 //	UdpEchoClientHelper echoClient (csmaInterfaces.GetAddress (0), 9);
 //
@@ -73,10 +75,9 @@ main (int argc, char *argv[])
 //
 //	ApplicationContainer clientApps = echoClient.Install (csmaNodes.Get (2));
 //
-//	clientApps.Start (Seconds (2.0));
-//
-//	clientApps.Stop (Seconds (50.0));
-	Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+	clientApps.Start (Seconds (2.0));
+	clientApps.Stop (Seconds (50.0));
+
 
 	Simulator::Run ();
 	Simulator::Destroy ();

@@ -50,6 +50,7 @@ namespace ns3
 	void
 	DHCPClient::StartApplication (void)
 	{
+		std::cout << "Testing Client" << std::endl;
 		if (m_DHCPCommSocket == 0)
 		{
       TypeId tid = TypeId::LookupByName ("ns3::UdpSocketFactory");
@@ -58,6 +59,7 @@ namespace ns3
 			m_DHCPCommSocket->Bind (local);
 		}
 		m_DHCPCommSocket->SetRecvCallback (MakeCallback (&DHCPClient::HandleDHCPResponse, this));
+		m_DHCPCommSocket->SetAllowBroadcast (true);
 
 		if (!m_DhcpServerDiscovered)
 			DhcpDiscover ();			
