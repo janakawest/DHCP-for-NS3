@@ -59,6 +59,35 @@ namespace ns3
 			;
 		return tid;
 	}
+	
+	void 
+	DHCPServer::StartApplication (void)
+	{
+		//NS_LOG_FUNCTION (this);
+		std::cout << "Testing from Server" << std::endl;	
+		if (m_socket == 0)
+		{
+      TypeId tid = TypeId::LookupByName ("ns3::UdpSocketFactory");
+			m_socket = Socket::CreateSocket (GetNode (), tid);
+			InetSocketAddress local = InetSocketAddress (m_DHCPServerAddress, DHCP_SERVER_COMM_PORT);
+			m_socket->Bind (local);
+		}
+		m_socket->SetRecvCallback (MakeCallback (&DHCPServer::HandleDHCPRequest, this));
+		m_socket->SetAllowBroadcast (true);
+	}
+
+	void 
+	DHCPServer::StopApplication ()
+	{
+		NS_LOG_FUNCTION (this);
+		
+		if (m_socket != 0)
+		{
+			m_socket->Close ();
+			m_socket->SetRecvCallback (MakeNullCallback <void, Ptr<Socket> > ());
+		}
+		DoDispose ();
+	}
 
 	void DHCPServer::DoInitialize (void)
 	{
@@ -156,34 +185,6 @@ namespace ns3
 		else 
 			return "";
   }
-	void 
-	DHCPServer::StartApplication (void)
-	{
-		NS_LOG_FUNCTION (this);
-		std::cout << "Testing from Server" << std::endl;	
-		if (m_socket == 0)
-		{
-      TypeId tid = TypeId::LookupByName ("ns3::UdpSocketFactory");
-			m_socket = Socket::CreateSocket (GetNode (), tid);
-			InetSocketAddress local = InetSocketAddress (m_DHCPServerAddress, DHCP_SERVER_COMM_PORT);
-			m_socket->Bind (local);
-		}
-		m_socket->SetRecvCallback (MakeCallback (&DHCPServer::HandleDHCPRequest, this));
-		m_socket->SetAllowBroadcast (true);
-	}
-
-	void 
-	DHCPServer::StopApplication ()
-	{
-		NS_LOG_FUNCTION (this);
-		
-		if (m_socket != 0)
-		{
-			m_socket->Close ();
-			m_socket->SetRecvCallback (MakeNullCallback <void, Ptr<Socket> > ());
-		}
-		DoDispose ();
-	}
 	
 	void 
 	DHCPServer::HandleDHCPRequest (Ptr<Socket> socket)

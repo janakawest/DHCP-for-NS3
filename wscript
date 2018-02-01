@@ -13,7 +13,8 @@ def build(bld):
 				'model/dhcp-server.cc',
 				'model/dhcp-client.cc',
 				'model/dhcp-header.cc',
-        'helper/dhcp-helper.cc',
+        'helper/dhcp-client-helper.cc',
+        'helper/dhcp-server-helper.cc',
         ]
 
 #    module_test = bld.create_ns3_module_test_library('dhcp')
@@ -28,7 +29,8 @@ def build(bld):
 				'model/dhcp-server.h',
 				'model/dhcp-client.h',
         'model/dhcp.h',
-        'helper/dhcp-helper.h',
+        'helper/dhcp-client-helper.h',
+        'helper/dhcp-server-helper.h',
         ]
 
     if bld.env.ENABLE_EXAMPLES:

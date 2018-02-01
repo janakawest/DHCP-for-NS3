@@ -52,7 +52,7 @@ main (int argc, char *argv[])
 
 	// For clients
 	ipv4.SetBase ("192.168.16.0","255.255.255.252");
-	Ipv4InterfaceContainer iic1 = ipv4.Assign (ndc1);	// Sendai,i1 <--> client1,1
+//	Ipv4InterfaceContainer iic1 = ipv4.Assign (ndc1);	// Sendai,i1 <--> client1,1
 
 	DHCPServerHelper dhcpserver;
 	//dhcpserver.SetAttribute ("SetServerAddress", 

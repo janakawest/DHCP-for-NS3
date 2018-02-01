@@ -1,7 +1,8 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 
 #include "ns3/core-module.h"
-#include "ns3/dhcp-helper.h"
+#include "ns3/dhcp-client-helper.h"
+#include "ns3/dhcp-server-helper.h"
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
 #include "ns3/csma-module.h"
@@ -75,10 +76,10 @@ main (int argc, char *argv[])
 //
 //	ApplicationContainer clientApps = echoClient.Install (csmaNodes.Get (2));
 //
-	clientApps.Start (Seconds (2.0));
-	clientApps.Stop (Seconds (50.0));
+	clientApps.Start (Seconds (200.0));
+	clientApps.Stop (Seconds (500.0));
 
-
+	Simulator::Stop (Seconds (502));
 	Simulator::Run ();
 	Simulator::Destroy ();
 	return 0;
